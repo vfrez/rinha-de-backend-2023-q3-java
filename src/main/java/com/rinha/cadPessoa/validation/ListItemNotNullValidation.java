@@ -1,16 +1,16 @@
 package com.rinha.cadPessoa.validation;
 
-import com.rinha.cadPessoa.validation.annotation.AllListIsString;
+import com.rinha.cadPessoa.validation.annotation.ListItemNotNull;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.List;
 import java.util.Objects;
 
-public class AllListIsStringValidation implements ConstraintValidator<AllListIsString, List<Object>> {
+public class ListItemNotNullValidation implements ConstraintValidator<ListItemNotNull, List<Object>> {
 
     @Override
-    public void initialize(AllListIsString constraintAnnotation) {
+    public void initialize(ListItemNotNull constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
@@ -20,10 +20,10 @@ public class AllListIsStringValidation implements ConstraintValidator<AllListIsS
             return true;
         }
 
-        long stringsInList = valueList.stream()
-                .filter(value -> value instanceof String)
+        long invalidCounter = valueList.stream()
+                .filter(value -> Objects.isNull(value))
                 .count();
 
-        return stringsInList == valueList.size();
+        return !(invalidCounter >= 1);
     }
 }

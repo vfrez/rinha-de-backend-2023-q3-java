@@ -1,9 +1,8 @@
 package com.rinha.cadPessoa.dto.request;
 
-import com.rinha.cadPessoa.validation.anotation.AllListIsString;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import com.rinha.cadPessoa.validation.annotation.AllListIsString;
+import com.rinha.cadPessoa.validation.annotation.ListItemNotNull;
+import com.rinha.cadPessoa.validation.annotation.ListItemSize;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +31,8 @@ public class PessoaDTO implements Serializable {
 
     //Precisou ser Object. Pq quando passa List<String> o objeto ja chega convertido para string e a validação da ruim.
     @AllListIsString()
-    @Size(max = 32)
+    @ListItemSize(max = 32)
+    @ListItemNotNull()
     private List<Object> stack;
 
 }

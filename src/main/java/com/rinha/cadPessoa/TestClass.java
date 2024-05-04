@@ -1,16 +1,13 @@
 package com.rinha.cadPessoa;
 
-import com.rinha.cadPessoa.model.Pessoa;
 import com.rinha.cadPessoa.repository.PessoaRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
-//@Component
 @Slf4j
+@Component
 public class TestClass {
 
     @Autowired
@@ -20,7 +17,7 @@ public class TestClass {
     @PostConstruct
     public void init() {
         log.info("Limpando base");
-        pessoaRepository.deleteAll();
+        pessoaRepository.deleteAllInBatch();
         log.info("Quantidade de itens na base {}", pessoaRepository.findAll().size());
 
 //        Pessoa pessoa = new Pessoa();

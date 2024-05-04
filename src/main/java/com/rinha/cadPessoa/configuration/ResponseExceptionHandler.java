@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,6 +27,16 @@ public class ResponseExceptionHandler {
 
     @ExceptionHandler({MissingServletRequestParameterException.class})
     public ResponseEntity<ExceptionDTO> missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException e) {
+        log.error("Exception error: {}", e.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionDTO(HttpStatus.BAD_REQUEST, e.getMessage())
+                );
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    public ResponseEntity<ExceptionDTO> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
         log.error("Exception error: {}", e.getMessage());
 
         return ResponseEntity

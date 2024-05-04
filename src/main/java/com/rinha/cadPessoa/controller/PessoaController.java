@@ -6,8 +6,10 @@ import com.rinha.cadPessoa.dto.request.PessoaDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +26,12 @@ public class PessoaController {
     @PostMapping(value = "/pessoas", produces = "application/json")
     public ResponseEntity<Pessoa> createPessoa(@Valid @RequestBody PessoaDTO pessoaDTO) {
         Pessoa pessoa = pessoaService.createPessoa(pessoaDTO);
+        log.info("Pessoa criada {}", pessoa);
 
-        log.info("Pessoa criada {}", pessoa.toString());
-        return new ResponseEntity<>(pessoa, HttpStatus.CREATED);
+        MultiValueMap<String, String> header = new HttpHeaders();
+        header.add("Location", String.format("/pessoas/%s", pessoa.getId()));
+
+        return new ResponseEntity<>(pessoa, header, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/pessoas/{id}", produces = "application/json")

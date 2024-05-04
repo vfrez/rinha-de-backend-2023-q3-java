@@ -30,7 +30,7 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
             <column name="NASCIMENTO" type="date">
                 <constraints nullable="false"/>
             </column>
-            <column name="STACK" type="varchar(32)">
+            <column name="STACK" type="varchar(2000)">
                 <constraints nullable="true"/>
             </column>
         </createTable>
