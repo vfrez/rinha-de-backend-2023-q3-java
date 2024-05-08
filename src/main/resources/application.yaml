@@ -1,5 +1,12 @@
 server:
   port: 9999
+#  tomcat:
+#    threads:
+#      max: 1
+#      min-spare: 1
+#    max-connections: 1000
+#    accept-count:  10
+
 
 spring:
   datasource:
@@ -9,7 +16,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   liquibase:
     change-log: classpath:db/changelog-master.xml
-
+  cache:
+    type: Caffeine #Não precisa. Apenas para facilitar na visualização
   jpa:
     hibernate:
       #Valida na inicialização do sistema, se o JPA conseguirá se comunicar com as entidades definidas

@@ -1,5 +1,6 @@
 package com.rinha.cadPessoa.configuration;
 
+import com.rinha.cadPessoa.exception.DuplicatedEntryException;
 import com.rinha.cadPessoa.exception.NotNullPropertyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,9 +16,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ResponseExceptionHandler {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<ExceptionDTO> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        log.error("Exception error: {}", e.getMessage());
+    @ExceptionHandler({MethodArgumentNotValidException.class, MissingServletRequestParameterException.class})
+    public ResponseEntity<ExceptionDTO> methodArgumentNotValidExceptionHandler(Exception e) {
+        log.error("Exception error Status 400: {}", e.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -25,19 +26,9 @@ public class ResponseExceptionHandler {
                 );
     }
 
-    @ExceptionHandler({MissingServletRequestParameterException.class})
-    public ResponseEntity<ExceptionDTO> missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException e) {
-        log.error("Exception error: {}", e.getMessage());
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ExceptionDTO(HttpStatus.BAD_REQUEST, e.getMessage())
-                );
-    }
-
-    @ExceptionHandler({HttpMessageNotReadableException.class})
-    public ResponseEntity<ExceptionDTO> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
-        log.error("Exception error: {}", e.getMessage());
+    @ExceptionHandler({HttpMessageNotReadableException.class, DuplicatedEntryException.class})
+    public ResponseEntity<ExceptionDTO> httpMessageNotReadableExceptionHandler(RuntimeException e) {
+        log.error("Exception error Status 400: {}", e.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -47,7 +38,7 @@ public class ResponseExceptionHandler {
 
     @ExceptionHandler({NotNullPropertyException.class, DataIntegrityViolationException.class})
     public ResponseEntity<ExceptionDTO> methodArgumentNotValidExceptionHandler(RuntimeException e) {
-        log.error("Exception error: {}", e.getMessage());
+        log.error("Exception error Status 422: {}", e.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)

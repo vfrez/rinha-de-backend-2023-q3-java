@@ -16,6 +16,21 @@ public class TestClass {
 
     @PostConstruct
     public void init() {
+        // Get current size of heap in bytes.
+        long heapSize = Runtime.getRuntime().totalMemory();
+
+        // Get maximum size of heap in bytes. The heap cannot grow beyond this size.
+        // Any attempt will result in an OutOfMemoryException.
+        long heapMaxSize = Runtime.getRuntime().maxMemory();
+
+        // Get amount of free memory within the heap in bytes. This size will
+        // increase after garbage collection and decrease as new objects are created.
+        long heapFreeSize = Runtime.getRuntime().freeMemory();
+
+        log.info("heapFreeSize {}", heapSize);
+        log.info("heapMaxSize {}", heapMaxSize);
+        log.info("heapFreeSize {}", heapFreeSize);
+
         log.info("Limpando base");
         pessoaRepository.deleteAllInBatch();
         log.info("Quantidade de itens na base {}", pessoaRepository.findAll().size());

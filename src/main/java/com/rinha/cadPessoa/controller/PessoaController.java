@@ -1,11 +1,18 @@
 package com.rinha.cadPessoa.controller;
 
-import com.rinha.cadPessoa.model.Pessoa;
-import com.rinha.cadPessoa.service.PessoaService;
 import com.rinha.cadPessoa.dto.request.PessoaDTO;
+import com.rinha.cadPessoa.exception.DuplicatedEntryException;
+import com.rinha.cadPessoa.model.Pessoa;
+import com.rinha.cadPessoa.service.CacheOperationsService;
+import com.rinha.cadPessoa.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +20,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 @RestController
@@ -23,38 +31,75 @@ public class PessoaController {
     @Autowired
     private PessoaService pessoaService;
 
+    @Autowired
+    private CacheOperationsService cacheOperationsService;
+
     @PostMapping(value = "/pessoas", produces = "application/json")
     public ResponseEntity<Pessoa> createPessoa(@Valid @RequestBody PessoaDTO pessoaDTO) {
+        StopWatch stopWatch = StopWatch.createStarted();
+
+        if (cacheOperationsService.countByApelidoInCache(pessoaDTO.getApelido()) > NumberUtils.INTEGER_ZERO){
+            throw new DuplicatedEntryException("Duplicado no cache");
+        }
+
         Pessoa pessoa = pessoaService.createPessoa(pessoaDTO);
         log.info("Pessoa criada {}", pessoa);
 
-        MultiValueMap<String, String> header = new HttpHeaders();
-        header.add("Location", String.format("/pessoas/%s", pessoa.getId()));
+        cacheOperationsService.storeInCache(pessoa);
 
-        return new ResponseEntity<>(pessoa, header, HttpStatus.CREATED);
+        log.info("Tempo de criação {}", stopWatch.formatTime());
+        return new ResponseEntity<>(pessoa, createResponseHeader(pessoa), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/pessoas/{id}", produces = "application/json")
     public ResponseEntity<Pessoa> getPessoaById(@PathVariable(value = "id") UUID id) {
-        Optional<Pessoa> pessoaOptional = pessoaService.getPessoaById(id);
+        StopWatch stopWatch = StopWatch.createStarted();
 
-        return pessoaOptional
-                .map(pessoa -> ResponseEntity.ok().body(pessoa))
-                .orElse(ResponseEntity.notFound().build());
+        Pessoa pessoa = pessoaService.getPessoaById(id);
+
+        log.info("Tempo de busca por ID {}", stopWatch.formatTime());
+
+        if (Objects.isNull(pessoa)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(pessoa);
     }
 
     @GetMapping(value = "/pessoas", produces = "application/json")
     public ResponseEntity<List<Pessoa>> getPessoaByTerm(@RequestParam(name = "t") String termo) {
+        StopWatch stopWatch = StopWatch.createStarted();
+        List<Pessoa> byTermInCache = cacheOperationsService.findByTermInCache(termo);
+
+        if (!byTermInCache.isEmpty()) {
+            log.info("Tempo de busca por termo cached {}", stopWatch.formatTime());
+            return new ResponseEntity<>(byTermInCache, HttpStatus.OK);
+        }
+
         List<Pessoa> pessoaList = pessoaService.getPessoaByTerm(termo);
 
+        log.info("Tempo de busca por termo {}", stopWatch.formatTime());
         return new ResponseEntity<>(pessoaList, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/contagem-pessoas", produces = "application/json")
+    @GetMapping(value = "/contagem-pessoas", produces = "text/plain")
     public ResponseEntity<String> countAllPessoas() {
         String quantityPessoas = pessoaService.countAllPessoas();
 
         return new ResponseEntity<>(quantityPessoas, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/limparcache", produces = "text/plain")
+    public ResponseEntity<String> limparCache() {
+        cacheOperationsService.clearCache();
+
+        return new ResponseEntity<>("Limpadinho da balada", HttpStatus.OK);
+    }
+
+    private MultiValueMap<String, String> createResponseHeader(Pessoa pessoa) {
+        MultiValueMap<String, String> header = new HttpHeaders();
+        header.add("Location", String.format("/pessoas/%s", pessoa.getId()));
+
+        return header;
     }
 
 }
