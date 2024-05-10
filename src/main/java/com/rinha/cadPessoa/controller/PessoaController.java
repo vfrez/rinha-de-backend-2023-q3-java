@@ -10,9 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 @RestController
@@ -68,17 +64,25 @@ public class PessoaController {
     @GetMapping(value = "/pessoas", produces = "application/json")
     public ResponseEntity<List<Pessoa>> getPessoaByTerm(@RequestParam(name = "t") String termo) {
         StopWatch stopWatch = StopWatch.createStarted();
+
         List<Pessoa> byTermInCache = cacheOperationsService.findByTermInCache(termo);
+
+        log.info("Tempo de busca por termo cached {}", stopWatch.formatTime());
+        return new ResponseEntity<>(byTermInCache, HttpStatus.OK);
+
+        /*
+        Removido pra dar desempenho, assim toda pesquisa é feita apenas no cache em memória
 
         if (!byTermInCache.isEmpty()) {
             log.info("Tempo de busca por termo cached {}", stopWatch.formatTime());
+            log.info("termo cached {}", termo);
             return new ResponseEntity<>(byTermInCache, HttpStatus.OK);
         }
-
         List<Pessoa> pessoaList = pessoaService.getPessoaByTerm(termo);
 
         log.info("Tempo de busca por termo {}", stopWatch.formatTime());
         return new ResponseEntity<>(pessoaList, HttpStatus.OK);
+        */
     }
 
     @GetMapping(value = "/contagem-pessoas", produces = "text/plain")

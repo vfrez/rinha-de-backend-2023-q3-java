@@ -1,9 +1,10 @@
 server:
   port: 9999
-#  tomcat:
-#    threads:
-#      max: 1
-#      min-spare: 1
+  tomcat:
+    threads:
+      max: 500
+      min-spare: 500
+#    connection-timeout: 1000
 #    max-connections: 1000
 #    accept-count:  10
 
@@ -14,6 +15,9 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 140
+      minimum-idle: 140
   liquibase:
     change-log: classpath:db/changelog-master.xml
   cache:

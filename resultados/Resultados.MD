@@ -3,6 +3,19 @@ CPU FX-8300
 RAM 16gb DD3 1333mhz
 armazenamento SSD
 ---
+## Quarta versão
+
+- Agora toda pesquisa é feita apenas no cache, NADA DE SEARCH EM BANCO NESTE LUGAR! 
+- Descobri um "bug". Aparentemente o gattling estava requisitando portas que não estavam disponíveis no windows.
+  - Para solucionar, foi necessário o range de portas que podem ser criadas no Windows
+    - https://learn.microsoft.com/en-US/troubleshoot/windows-server/networking/default-dynamic-port-range-tcpip-chang
+
+
+#### Quantidade de registros criados -> 32.374 ~ 33.899
+![Resultado 4](.\resultado4.png)
+
+---
+---
 ## Terceira versão
 
 Criação de coluna para armazenar dados das colunas apelido, nome e stack para facilitar a consulta por termo, não melhorou a performance. =(

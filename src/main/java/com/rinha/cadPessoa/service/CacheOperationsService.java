@@ -33,7 +33,7 @@ public class CacheOperationsService {
         return cacheMap.values().stream().filter(value -> {
             Pessoa pessoa = (Pessoa) value;
             String searchableValues = pessoa.getNome() + pessoa.getApelido() + pessoa.getStack();
-            return searchableValues.contains(term);
+            return searchableValues.toLowerCase().contains(term.toLowerCase());
         }).map(value -> (Pessoa) value).toList();
     }
 
