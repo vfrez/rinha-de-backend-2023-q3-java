@@ -1,0 +1,54 @@
+version: '3.5'
+name: 'rinha-backend'
+
+services:
+  api1: # API - Instância 01
+    image: cadpessoa:0.0.1
+    container_name: cadpessoa
+    hostname: api1
+    environment:
+      DATASOURCE_HOST: db
+#      DATASOURCE_SCHEMA: cadastro
+#      DATASOURCE_USERNAME: root
+#      DATASOURCE_PASSWORD: root
+#      SERVER_MAX_POOL: 30
+#      DATABASE_MAX_POOL: 30
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 9999:9999
+      - 9010:9010
+    deploy:
+      resources:
+        limits:
+          cpus: '1.2'
+          memory: '1.5GB'
+    networks:
+      - networker
+
+  db: # Banco de dados
+    image: mysql:8.4.0
+    container_name: mysqlcomp
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    healthcheck:
+#      test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD' ]
+#      test: out=$$(mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
+      test: "mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute \"SHOW DATABASES;\" || exit 1"
+      start_period: 4s
+      interval: 6s
+      timeout: 6s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: '1.5GB'
+    networks:
+      - networker
+
+networks:
+  networker: {}

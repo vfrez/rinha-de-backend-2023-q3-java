@@ -22,6 +22,10 @@ public class CacheOperationsService {
         cacheManager.getCache("pessoas").clear();
     }
 
+    public String countCache() {
+        return String.valueOf(getCacheMap().size());
+    }
+
     public void storeInCache(Pessoa pessoa) {
         Cache pessoasCache = cacheManager.getCache("pessoas");
         pessoasCache.put(pessoa.getId(), pessoa);
