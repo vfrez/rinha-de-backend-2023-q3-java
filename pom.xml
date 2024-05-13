@@ -81,6 +81,10 @@
 					<jvmArguments>
 						-Xms512m
 						-Xmx512m
+						-XX:+UseG1GC
+						-XX:+ParallelRefProcEnabled
+						-XX:+AlwaysPreTouch
+						-XX:+ExitOnOutOfMemoryError
 					</jvmArguments>
 				</configuration>
 			</plugin>

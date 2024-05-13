@@ -39,7 +39,7 @@ public class PessoaController {
         }
 
         Pessoa pessoa = pessoaService.createPessoa(pessoaDTO);
-        log.info("Pessoa criada {}", pessoa);
+        log.debug("Pessoa criada {}", pessoa);
 
         cacheOperationsService.storeInCache(pessoa);
 

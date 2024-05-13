@@ -3,7 +3,7 @@ name: 'rinha-backend'
 
 services:
   api1: # API - Instância 01
-    image: cadpessoa:0.0.1 #Trocar para imagem dockerhub
+    build: .
     container_name: cadpessoa
     hostname: api1
     environment:
@@ -14,7 +14,6 @@ services:
 #      SERVER_MAX_POOL: 30
 #      DATABASE_MAX_POOL: 30
 #      JAVA_TOOL_OPTIONS: "-verbose:gc"
-      JAVA_TOOL_OPTIONS: "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=9010 -Djava.rmi.server.hostname=localhost"
     depends_on:
       db:
         condition: service_healthy

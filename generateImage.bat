@@ -19,9 +19,8 @@ ECHO
 CALL docker build -t cadpessoa:0.0.1 .
 ECHO
 
+ECHO
 ECHO Finished generation.
 ECHO
 
 CALL docker images | findstr cadpessoa
-
-PAUSE

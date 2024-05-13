@@ -11,17 +11,13 @@ COPY ${JAR_FILE} ./application.jar
 EXPOSE 9010
 
 #Expondo porta para acessar dados da JVM remotamente
-#Limitande uso da JVM a 512Mb
+#Limitande uso da JVM a 75% da RAM do host
 ENTRYPOINT ["java", \
-"-Xms512m", \
-"-Xmx512m", \
-"-Dcom.sun.management.jmxremote=true", \
-"-Dcom.sun.management.jmxremote.local.only=false", \
-"-Dcom.sun.management.jmxremote.authenticate=false", \
-"-Dcom.sun.management.jmxremote.ssl=false", \
-"-Dcom.sun.management.jmxremote.port=9010", \
-"-Dcom.sun.management.jmxremote.rmi.port=9010",\
-"-Djava.rmi.server.hostname=localhost", \
+"-XX:MaxRAMPercentage=75", \
+"-XX:+UseG1GC", \
+"-XX:+ParallelRefProcEnabled", \
+"-XX:+AlwaysPreTouch", \
+"-XX:+ExitOnOutOfMemoryError", \
 "-jar", \
 "./application.jar"]
 
