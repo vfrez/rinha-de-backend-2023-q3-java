@@ -1,9 +1,36 @@
-Para iniciar rode
+# Rodar aplicação sem Nginx
+
+Iniciar aplicação
 ```cmd
 mvn spring-boot:run
 ```
 
-> Nota: Recomendável rodar com maven para carregar as JVM environment variables. <br>
+# Rodar aplicação com Nginx
+
+Baixar Nginx localmente (Este procedimento tambem é feito pelo **startNginx.bat**)
+```cmd
+curl -o nginx.zip https://nginx.org/download/nginx-1.26.0.zip
+tar -xf nginx.zip
+ren "nginx-1.26.0" "nginx"
+```
+
+Iniciar Nginx 
+```cmd
+.\startNginx.bat
+```
+
+Iniciar aplicação
+```cmd
+mvn spring-boot:run
+```
+
+Caso seja necessário alterar **nginx.conf**, rode
+```cmd
+.\nginx\nginx.exe -s reload
+```
+
+
+> Nota: Recomendável rodar com maven(mvn spring-boot:run) para carregar as JVM environment variables. <br>
 > Caso rode sem o maven é aconselhável passar "-Xmx512M -Xms512M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:+AlwaysPreTouch -XX:+ExitOnOutOfMemoryError" 
 
 > A porta padrão é 9999 <br>
@@ -47,6 +74,8 @@ cd \stress-test
 ## Pontos importantes vistos no processo
 Rodando no Windows 10 tive problema com portas efêmeras <br>
 para resolver, tive que aumentar a quantidade delas.
+
+> Ao rodar no linux eu vi que essa limitação também existe e precisa ser alterada em certos cenários
 
 Mostrar quantas estão livres para uso no Windows
 ```cmd

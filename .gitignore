@@ -8,6 +8,7 @@ target/
 mvnw
 mvnw.cmd
 stress-test
+nginx
 
 ### STS ###
 .apt_generated
