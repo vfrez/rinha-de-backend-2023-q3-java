@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ public class PessoaController {
 
     @Autowired
     private CacheOperationsService cacheOperationsService;
+
+    @Value("${search-by-term-on-database}")
+    private Boolean searchByTermOnDatabase;
 
     @PostMapping(value = "/pessoas", produces = "application/json")
     public ResponseEntity<Pessoa> createPessoa(@Valid @RequestBody PessoaDTO pessoaDTO) {
@@ -65,24 +69,17 @@ public class PessoaController {
     public ResponseEntity<List<Pessoa>> getPessoaByTerm(@RequestParam(name = "t") String termo) {
         StopWatch stopWatch = StopWatch.createStarted();
 
+        if (searchByTermOnDatabase) {
+            List<Pessoa> pessoaList = pessoaService.getPessoaByTerm(termo);
+
+            log.info("Tempo de busca por termo {}", stopWatch.formatTime());
+            return new ResponseEntity<>(pessoaList, HttpStatus.OK);
+        }
+
         List<Pessoa> byTermInCache = cacheOperationsService.findByTermInCache(termo);
 
         log.info("Tempo de busca por termo cached {}", stopWatch.formatTime());
         return new ResponseEntity<>(byTermInCache, HttpStatus.OK);
-
-        /*
-        Removido pra dar desempenho, assim toda pesquisa é feita apenas no cache em memória
-
-        if (!byTermInCache.isEmpty()) {
-            log.info("Tempo de busca por termo cached {}", stopWatch.formatTime());
-            log.info("termo cached {}", termo);
-            return new ResponseEntity<>(byTermInCache, HttpStatus.OK);
-        }
-        List<Pessoa> pessoaList = pessoaService.getPessoaByTerm(termo);
-
-        log.info("Tempo de busca por termo {}", stopWatch.formatTime());
-        return new ResponseEntity<>(pessoaList, HttpStatus.OK);
-        */
     }
 
     @GetMapping(value = "/contagem-pessoas", produces = "text/plain")

@@ -14,6 +14,8 @@ datasource:
   username: ${DATASOURCE_USERNAME:root}
   password: ${DATASOURCE_PASSWORD:root}
 
+search-by-term-on-database: ${DATABASE_SEARCH_TERM:false}
+
 spring:
   datasource:
     url: jdbc:mysql://${datasource.host}:3306/${datasource.schema}?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false

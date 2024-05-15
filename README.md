@@ -5,6 +5,8 @@ Iniciar aplicação
 mvn spring-boot:run
 ```
 
+---
+
 # Rodar aplicação com Nginx
 
 Baixar Nginx localmente (Este procedimento tambem é feito pelo **startNginx.bat**)
@@ -36,6 +38,14 @@ Caso seja necessário alterar **nginx.conf**, rode
 > A porta padrão é 9999 <br>
 > No dockerfile tem uma config para abrir o monitoramento remoto da JVM, aberto na porta 9010. Pra usar com ferramentas como VisualVM
 
+## Rodar usando duas instancias
+Por ter tido um desempenho ruinzinho, deixei um nginx.conf e um docker-compose.yaml com as configs necessárias para rodar.
+Talvez fique melhor adicionando o cache fora da aplicação, como um servidor redis, assim daria para fazer as consultas por termo usando cache. Mas vai ficar assim mesmo :D
+
+
+
+---
+
 
 ## Variáveis de ambiente
 - DATASOURCE_SCHEMA - default cadastro
@@ -43,6 +53,7 @@ Caso seja necessário alterar **nginx.conf**, rode
 - DATASOURCE_PASSWORD - default root
 - SERVER_MAX_POOL - default 30
 - DATABASE_MAX_POOL - default 30
+- DATABASE_SEARCH_TERM - default false
 
 
 ## Gerar imagem docker 

@@ -2,6 +2,29 @@ Testes feitos em uma maquina
 CPU FX-8300
 RAM 16gb DD3 1333mhz
 armazenamento SSD
+
+---
+## Sexta versão
+
+Ao tentar usar duas instancias do sistema, foi preciso fazer a busca por termo pelo banco de dados, isso derrubou a performance praticamente pela metade
+
+Então para tentar melhorar, adicionei uma regra no nginx.conf, onde as consultas por termo ficam na instancia2 e o restante fica na instancia1
+Isso melhorou o desempenho, saindo de 16k para 19k.
+
+O melhor ainda é com uma só instancia e fazendo a consulta por termo no usando cache local.
+
+#### Quantidade de registros criados -> +-19953
+![Resultado 6](resultado6.png)
+
+---## Quinta versão
+
+Usando **Finalmente** nginx
+Porem com uma instãncia da aplicação
+
+#### Quantidade de registros criados -> +-28937 (Sim uma perda de criações :']. Motivo: NãoTenhoIdéia.exe)
+![Resultado 5](resultado5.png)
+
+
 ---
 ## Quarta versão
 
