@@ -1,5 +1,7 @@
 # Rodar aplicação sem Nginx
 
+> Aqui será usada a porta 8080
+
 Iniciar aplicação
 ```cmd
 mvn spring-boot:run
@@ -8,6 +10,8 @@ mvn spring-boot:run
 ---
 
 # Rodar aplicação com Nginx
+
+> Aqui será usada a porta 9999
 
 Baixar Nginx localmente (Este procedimento tambem é feito pelo **startNginx.bat**)
 ```cmd
