@@ -28,7 +28,7 @@ spring:
   liquibase:
     change-log: classpath:db/changelog-master.xml
   cache:
-    type: Caffeine #Não precisa. Apenas para facilitar na visualização
+    type: Caffeine #Por padrao, é usado ConcurrentHashMap
   jpa:
     hibernate:
       #Valida na inicialização do sistema, se o JPA conseguirá se comunicar com as entidades definidas
